@@ -47,6 +47,9 @@ COPY services/portal/pyproject.toml ./services/portal/pyproject.toml
 # Sync portal production dependencies
 RUN uv sync --group portal --group prod --frozen --no-dev
 
+# Activate venv — ensures python, gunicorn, etc. resolve from .venv
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Copy portal service code
 COPY services/portal/ ./
 
@@ -55,7 +58,8 @@ COPY services/portal/ ./
 # ===============================================================================
 # Create required directories (minimal)
 RUN mkdir -p /app/staticfiles \
-    && mkdir -p /app/logs
+    && mkdir -p /app/logs \
+    && mkdir -p /var/log/praho/portal
 
 # ===============================================================================
 # SECURITY & PERMISSIONS 🔒
@@ -65,15 +69,15 @@ RUN addgroup --system django \
     && adduser --system --group django
 
 # Set proper permissions
-RUN chown -R django:django /app
+RUN chown -R django:django /app \
+    && chown -R django:django /var/log/praho
 USER django
 
 # ===============================================================================
 # HEALTH CHECK 🏥
 # ===============================================================================
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8701/health/', timeout=10)" \
-    || exit 1
+    CMD curl -f http://localhost:8701/status/ || exit 1
 
 # ===============================================================================
 # RUNTIME CONFIGURATION ⚙️

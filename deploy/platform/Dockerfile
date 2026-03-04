@@ -50,6 +50,9 @@ COPY services/platform/pyproject.toml ./services/platform/pyproject.toml
 # Sync platform production dependencies
 RUN uv sync --group platform --group prod --frozen --no-dev
 
+# Activate venv — ensures python, gunicorn, etc. resolve from .venv
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Copy platform service code (includes assets/ and static/)
 COPY services/platform/ ./
 
@@ -65,7 +68,8 @@ COPY deploy/platform/entrypoint.sh /app/entrypoint.sh
 # Create required runtime directories
 RUN mkdir -p /app/staticfiles \
     && mkdir -p /app/media \
-    && mkdir -p /app/logs
+    && mkdir -p /app/logs \
+    && mkdir -p /var/log/praho
 
 # ===============================================================================
 # SECURITY & PERMISSIONS 🔒
@@ -76,15 +80,15 @@ RUN addgroup --system django \
 
 # Set proper permissions
 RUN chmod +x /app/entrypoint.sh \
-    && chown -R django:django /app
+    && chown -R django:django /app \
+    && chown -R django:django /var/log/praho
 USER django
 
 # ===============================================================================
 # HEALTH CHECK 🏥
 # ===============================================================================
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8700/health/', timeout=10)" \
-    || exit 1
+    CMD curl -f http://localhost:8700/api/users/health/ || exit 1
 
 # ===============================================================================
 # RUNTIME CONFIGURATION ⚙️
