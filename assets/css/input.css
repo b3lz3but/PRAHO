@@ -217,3 +217,14 @@ body.mobile-menu-open {
   position: fixed;
   width: 100%;
 }
+
+/* ===============================================================================
+   AUTH PAGE OVERRIDES 🔒
+   ===============================================================================
+   Hide non-essential overlays on auth pages to prevent obstruction.
+   Auth templates set body_class="auth-page" via {% block body_class %}.
+   =============================================================================== */
+
+body.auth-page #cookie-consent-banner {
+  display: none !important;
+}
