@@ -99,7 +99,15 @@
     "/^tail\\s+/": true,
     "/^cat\\s+/": true,
     "/^ls\\s+/": true,
-    "/^grep\\s+/": true
+    "/^grep\\s+/": true,
+    "/^make install$/": {
+      "approve": true,
+      "matchCommandLine": true
+    },
+    "/^uv sync --all-groups$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
   },
   // ===============================================================================
   // MYPY TYPE CHECKING CONFIGURATION
