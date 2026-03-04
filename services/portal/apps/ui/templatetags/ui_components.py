@@ -152,7 +152,7 @@ class EnhancedTableConfig:
     pagination_enabled: bool = True
     include_js: bool = True
     action_column_label: str = ""
-    empty_icon: str = "📋"
+    empty_icon: str = ""
     empty_title: str = ""
     empty_message: str = ""
     empty_action_url: str = ""
@@ -737,6 +737,29 @@ _ICON_PATHS: dict[str, str | tuple[str, ...]] = {
     "book": "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",
     "chart": "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
     "currency": "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+    # ── A.5 additions: migrated from raw <svg> in feature templates ──
+    "chevron-left": "M15 19l-7-7 7-7",
+    "chevron-down": "M19 9l-7 7-7-7",
+    "chevron-right": "M9 5l7 7-7 7",
+    "arrow-up": "M5 10l7-7m0 0l7 7m-7-7v18",
+    "arrow-down": "M19 14l-7 7m0 0l-7-7m7 7V3",
+    "arrow-right": "M14 5l7 7m0 0l-7 7m7-7H3",
+    "map-pin": (
+        "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
+        "M15 11a3 3 0 11-6 0 3 3 0 016 0z",
+    ),
+    "edit": "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+    "exclamation-circle": "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+    "paperclip": "M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13",
+    "shield-check": "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+    "swap": "M8 9l4-4 4 4m0 6l-4 4-4-4",
+    "pause": "M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z",
+    "x-circle": "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
+    "send": "M12 19l9 2-9-18-9 18 9-2zm0 0v-8",
+    "adjustments": (
+        "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4",
+    ),
+    "flag": "M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9",
 }
 
 _ICON_SIZES: dict[str, str] = {
@@ -896,14 +919,14 @@ def dropdown(title: str, items: list[dict[str, Any]], *, icon: str | None = None
     Romanian hosting provider dropdown navigation component
 
     Usage:
-        {% dropdown "Business" business_items icon="🏢" %}
-        {% dropdown "Support" support_items icon="🎫" %}
+        {% dropdown "Business" business_items icon="building" %}
+        {% dropdown "Support" support_items icon="tickets" %}
 
     Items format:
         [
-            {"text": "Customers", "url": "/customers/", "icon": "👥"},
+            {"text": "Customers", "url": "/customers/", "icon": "users"},
             {"divider": True},
-            {"text": "Invoices", "url": "/invoices/", "icon": "🧾", "badge": {"text": "3", "variant": "warning"}},
+            {"text": "Invoices", "url": "/invoices/", "icon": "invoices", "badge": {"text": "3", "variant": "warning"}},
         ]
 
     Args:
