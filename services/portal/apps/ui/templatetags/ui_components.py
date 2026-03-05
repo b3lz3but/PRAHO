@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from django import template
+from django.forms import CheckboxInput, Select, Textarea
 from django.utils.html import format_html, mark_safe  # For XSS prevention
 
 from apps.common.constants import FILE_SIZE_CONVERSION_FACTOR
@@ -430,6 +431,159 @@ def alert(message: str, *, config: AlertConfig | None = None, **kwargs: Any) -> 
     }
 
 
+# ===============================================================================
+# FORM-FIELD BRIDGE TAGS (A.1) — Accept Django BoundField objects
+# ===============================================================================
+
+
+@register.inclusion_tag("components/input.html")
+def form_field(field: Any, *, icon_left: str | None = None, **kwargs: str) -> dict[str, Any]:
+    """
+    Bridge tag: renders a Django BoundField via the {% input_field %} component.
+
+    Usage:
+        {% form_field form.email icon_left="mail" %}
+        {% form_field form.password icon_left="lock" placeholder="Enter password" %}
+        {% form_field form.customer_type %}   {# select widget auto-detected #}
+    """
+    widget = field.field.widget
+    name: str = field.html_name
+    html_id: str = field.id_for_label or f"id_{name}"
+
+    # ── Detect input_type from widget class ──
+    input_type = "text"
+    if isinstance(widget, Textarea):
+        input_type = "textarea"
+    elif isinstance(widget, Select):
+        input_type = "select"
+    elif isinstance(widget, CheckboxInput):
+        input_type = "checkbox"
+    else:
+        # Honour widget.input_type (email, password, number, etc.)
+        wt = getattr(widget, "input_type", "text")
+        if wt:
+            input_type = wt
+
+    # ── Build options list for <select> ──
+    options: list[dict[str, str]] | None = None
+    if input_type == "select":
+        # choices is list of (value, label) tuples
+        choices = getattr(field.field, "choices", [])
+        options = [{"value": str(v), "label": str(lbl)} for v, lbl in choices]
+
+    # ── Extract first error (if any) ──
+    first_error: str | None = None
+    if field.errors:
+        first_error = str(field.errors[0])
+
+    # ── Current value ──
+    value = field.value()
+    value_str: str = str(value) if value is not None else ""
+
+    # ── Label text ──
+    label = str(field.label) if field.label else None
+
+    # ── Help text ──
+    help_text = str(field.help_text) if field.help_text else None
+
+    return {
+        "name": name,
+        "input_type": input_type,
+        "value": value_str,
+        "label": label,
+        "placeholder": kwargs.get("placeholder", getattr(widget, "attrs", {}).get("placeholder", "")),
+        "required": field.field.required,
+        "disabled": kwargs.get("disabled", False),
+        "readonly": kwargs.get("readonly", False),
+        "error": first_error,
+        "help_text": help_text,
+        "icon_left": icon_left,
+        "icon_right": kwargs.get("icon_right"),
+        "css_class": kwargs.get("css_class", ""),
+        "html_id": html_id,
+        "autocomplete": kwargs.get("autocomplete", getattr(widget, "attrs", {}).get("autocomplete", "")),
+        "autofocus": kwargs.get("autofocus", getattr(widget, "attrs", {}).get("autofocus", False)),
+        "hx_get": "",
+        "hx_post": "",
+        "hx_trigger": "",
+        "hx_target": "",
+        "hx_swap": "",
+        "options": options,
+        "romanian_validation": False,
+        "has_error": bool(first_error),
+        "container_class": kwargs.get("container_class", ""),
+        "help_text_below": None,
+    }
+
+
+@register.inclusion_tag("components/checkbox.html")
+def form_checkbox(field: Any, **kwargs: Any) -> dict[str, Any]:
+    """
+    Bridge tag: renders a Django BoundField checkbox via {% checkbox_field %}.
+
+    Usage:
+        {% form_checkbox form.remember_me %}
+        {% form_checkbox form.data_processing_consent %}
+    """
+    name: str = field.html_name
+    html_id: str = field.id_for_label or f"id_{name}"
+
+    first_error: str | None = None
+    if field.errors:
+        first_error = str(field.errors[0])
+
+    label = str(field.label) if field.label else None
+    help_text = str(field.help_text) if field.help_text else None
+
+    # Determine checked state
+    value = field.value()
+    checked = bool(value) if value is not None else False
+
+    return {
+        "name": name,
+        "label": kwargs.get("label", label),
+        "value": "on",
+        "checked": checked,
+        "required": field.field.required,
+        "disabled": kwargs.get("disabled", False),
+        "error": first_error,
+        "help_text": help_text,
+        "variant": kwargs.get("variant", "primary"),
+        "css_class": kwargs.get("css_class", ""),
+        "container_class": kwargs.get("container_class", ""),
+        "html_id": html_id,
+        "hx_get": "",
+        "hx_post": "",
+        "hx_trigger": "",
+        "hx_target": "",
+        "hx_swap": "",
+        "data_attrs": kwargs.get("data_attrs", {}),
+    }
+
+
+@register.inclusion_tag("components/form_error_summary.html")
+def form_error_summary(form: Any) -> dict[str, Any]:
+    """
+    Render a top-of-form error summary (non-field errors + all field errors).
+
+    Usage:
+        {% form_error_summary form %}
+    """
+    errors: list[str] = []
+
+    # Non-field errors first
+    if hasattr(form, "non_field_errors"):
+        errors.extend(str(err) for err in form.non_field_errors())
+
+    # Then field-level errors
+    if hasattr(form, "errors"):
+        for field_name, field_errors in form.errors.items():
+            if field_name != "__all__":
+                errors.extend(str(err) for err in field_errors)
+
+    return {"errors": errors, "has_errors": bool(errors)}
+
+
 @register.inclusion_tag("components/modal.html")
 def modal(modal_id: str, title: str, *, config: ModalConfig | None = None, **kwargs: Any) -> dict[str, Any]:
     """
@@ -760,6 +914,10 @@ _ICON_PATHS: dict[str, str | tuple[str, ...]] = {
         "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4",
     ),
     "flag": "M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9",
+    "eye": (
+        "M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+        "M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
+    ),
 }
 
 _ICON_SIZES: dict[str, str] = {
