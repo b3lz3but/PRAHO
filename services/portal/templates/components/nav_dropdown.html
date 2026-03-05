@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n ui_components %}
 
 {# Romanian hosting provider dropdown navigation component #}
 <div class="relative inline-block text-left" x-data="{ open: false }" @click.away="open = false">
@@ -12,10 +12,9 @@
         <span class="mr-2">{{ icon }}</span>
       {% endif %}
       {{ title }}
-      <svg class="ml-1 h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
-           fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-      </svg>
+      <span class="ml-1 transition-transform duration-200 inline-flex" :class="{ 'rotate-180': open }">
+        {% icon "chevron-down" size="sm" %}
+      </span>
     </button>
   </div>
 

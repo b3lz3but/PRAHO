@@ -144,12 +144,8 @@ def main() -> int:
         description="Check that shared components are identical between Portal and Platform."
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Show full diffs for divergent components")
-    parser.add_argument(
-        "--fix", action="store_true", help="Copy portal -> platform for any divergent components"
-    )
-    parser.add_argument(
-        "--list", action="store_true", help="List all shared components and exit"
-    )
+    parser.add_argument("--fix", action="store_true", help="Copy portal -> platform for any divergent components")
+    parser.add_argument("--list", action="store_true", help="List all shared components and exit")
     args = parser.parse_args()
 
     if args.list:
@@ -185,11 +181,7 @@ def main() -> int:
             drifted.append(name)
 
     print("━" * 56)
-    print(
-        f"📊 Results: {len(matched)} identical  "
-        f"| {len(drifted)} divergent  "
-        f"| {len(skipped)} intentionally different"
-    )
+    print(f"📊 Results: {len(matched)} identical  | {len(drifted)} divergent  | {len(skipped)} intentionally different")
 
     if drifted and args.fix:
         print("\n🔧 Fixing divergent components (portal → platform)...")
@@ -199,9 +191,7 @@ def main() -> int:
         return 0
 
     if drifted:
-        print(
-            f"\n❌ {len(drifted)} component(s) have unintentional drift: {', '.join(drifted)}"
-        )
+        print(f"\n❌ {len(drifted)} component(s) have unintentional drift: {', '.join(drifted)}")
         print("   → Run with --verbose to see diffs")
         print("   → Run with --fix to sync portal → platform")
         print(f"   → Or add to {PARITY_IGNORE_FILE.name} if divergence is intentional")

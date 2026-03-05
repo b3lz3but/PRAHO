@@ -10,6 +10,7 @@ Checks:
   TMPL006  Inline <style> block in a component template (only [x-cloak] 1-liners allowed)
   TMPL007  Inline <script> block in a component template (JS must live in static/)
   TMPL008  Emoji character in template (should use {% icon %} or remove)
+  TMPL009  Raw <svg> in component template not allowlisted as complex visual
 
 Exit codes:
     0 — no violations
@@ -27,6 +28,7 @@ import argparse
 import re
 import sys
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 # ===============================================================================
@@ -36,6 +38,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PORTAL_TEMPLATES = REPO_ROOT / "services" / "portal" / "templates"
 COMPONENT_DIR = PORTAL_TEMPLATES / "components"
+COMPONENT_SVG_ALLOWLIST_FILE = REPO_ROOT / ".component-svg-allowlist"
 
 # Severity levels
 SEVERITY_BLOCKER = "blocker"
@@ -101,6 +104,9 @@ _EMOJI_RE = re.compile(
     re.UNICODE,
 )
 
+# TMPL009: Raw SVG in component templates must be allowlisted as complex visuals
+_RAW_SVG_RE = re.compile(r"<svg\b", re.IGNORECASE)
+
 # ===============================================================================
 # FILE ROUTING
 # ===============================================================================
@@ -124,6 +130,30 @@ def is_feature_template(path: Path) -> bool:
         return False
 
 
+@lru_cache(maxsize=1)
+def load_component_svg_allowlist() -> set[str]:
+    """
+    Load allowlisted component template paths that can keep raw SVG.
+
+    File format:
+      services/portal/templates/components/button.html | loading spinner
+    """
+    if not COMPONENT_SVG_ALLOWLIST_FILE.exists():
+        return set()
+
+    allowed: set[str] = set()
+    lines = COMPONENT_SVG_ALLOWLIST_FILE.read_text(encoding="utf-8").splitlines()
+    for raw in lines:
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        path_part = line.split("|", 1)[0].strip()
+        if not path_part:
+            continue
+        allowed.add(path_part.replace("\\", "/"))
+    return allowed
+
+
 # ===============================================================================
 # FILE SCANNER
 # ===============================================================================
@@ -132,8 +162,12 @@ def is_feature_template(path: Path) -> bool:
 def scan_file(path: Path) -> list[Violation]:
     """Scan a single template file and return all violations found."""
     violations: list[Violation] = []
+    path = path.resolve()
     is_component = is_component_template(path)
     is_feature = is_feature_template(path)
+    relative_path = str(path.relative_to(REPO_ROOT)).replace("\\", "/")
+    component_svg_allowlist = load_component_svg_allowlist()
+    svg_allowed_in_component = relative_path in component_svg_allowlist
 
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
@@ -254,6 +288,19 @@ def scan_file(path: Path) -> list[Violation]:
                     )
                 )
 
+            if _RAW_SVG_RE.search(raw_line) and not svg_allowed_in_component:
+                violations.append(
+                    Violation(
+                        "TMPL009",
+                        SEVERITY_WARNING,
+                        path,
+                        line_no,
+                        "Raw <svg> in component — icon-like SVG must use {% icon %}; "
+                        "only allowlisted complex visuals permitted",
+                        snippet=line[:120],
+                    )
+                )
+
     return violations
 
 
@@ -289,6 +336,7 @@ def main() -> int:
             ("TMPL006", SEVERITY_WARNING, "Inline <style> block in component template"),
             ("TMPL007", SEVERITY_WARNING, "Inline <script> block in component template"),
             ("TMPL008", SEVERITY_BLOCKER, "Emoji character in template"),
+            ("TMPL009", SEVERITY_WARNING, "Raw <svg> in component template not allowlisted"),
         ]
         for code, sev, desc in codes:
             print(f"  {code}  [{sev:7}]  {desc}")

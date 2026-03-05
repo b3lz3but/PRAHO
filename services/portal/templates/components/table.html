@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load ui_components %}
 {# =============================================================================== #}
 {# PRAHO PLATFORM - TABLE COMPONENT #}
 {# =============================================================================== #}
@@ -26,23 +27,12 @@
             {{ header.label }}
             {% if header.sort_direction %}
             {% if header.sort_direction == "asc" %}
-            <svg class="ml-2 h-4 w-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                clip-rule="evenodd" />
-            </svg>
+            {% icon "chevron-up" size="sm" css_class="ml-2 text-slate-400" %}
             {% elif header.sort_direction == "desc" %}
-            <svg class="ml-2 h-4 w-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd" />
-            </svg>
+            {% icon "chevron-down" size="sm" css_class="ml-2 text-slate-400" %}
             {% endif %}
             {% else %}
-            <svg class="ml-2 h-4 w-4 text-slate-300 group-hover:text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                d="M5 12a1 1 0 102 0V6.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L5 6.414V12zM15 8a1 1 0 10-2 0v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L15 13.586V8z" />
-            </svg>
+            {% icon "adjustments" size="sm" css_class="ml-2 text-slate-300 group-hover:text-slate-400" %}
             {% endif %}
           </button>
           {% else %}
@@ -120,10 +110,7 @@
           {{ empty_message }}
           {% else %}
           <div class="text-center">
-            <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            {% icon "document" size="2xl" css_class="mx-auto text-slate-400" %}
             <h3 class="mt-2 text-sm font-medium text-slate-900 dark:text-slate-100">{% trans "Nu există date" %}</h3>
             <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Încă nu au fost adăugate înregistrări.</p>
             {% if empty_action %}
@@ -191,11 +178,7 @@
           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
           hx-get="{{ pagination.previous_url }}" hx-target="{{ pagination.target|default:'#table-container' }}"
           hx-swap="{{ pagination.swap|default:'outerHTML' }}">
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clip-rule="evenodd" />
-          </svg>
+          {% icon "chevron-left" %}
         </button>
         {% endif %}
 
@@ -226,11 +209,7 @@
           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-slate-300 bg-white text-sm font-medium text-slate-500 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
           hx-get="{{ pagination.next_url }}" hx-target="{{ pagination.target|default:'#table-container' }}"
           hx-swap="{{ pagination.swap|default:'outerHTML' }}">
-          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clip-rule="evenodd" />
-          </svg>
+          {% icon "chevron-right" %}
         </button>
         {% endif %}
       </nav>

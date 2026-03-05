@@ -5,6 +5,7 @@
 
 {% load static %}
 {% load i18n %}
+{% load ui_components %}
 
 {# Modal backdrop and container #}
 <div {% if html_id %}id="{{ html_id }}" {% else %}id="modal-{{ modal_id|default:'default' }}" {% endif %} class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="{% if not show|default:False %}display: none;{% endif %}"{% if hx_get %} hx-get="{{ hx_get }}"{% endif %}{% if hx_post %} hx-post="{{ hx_post }}"{% endif %}{% if hx_trigger %} hx-trigger="{{ hx_trigger }}"{% endif %}{% if hx_target %} hx-target="{{ hx_target }}"{% endif %}{% if hx_swap %} hx-swap="{{ hx_swap }}"{% endif %}>
@@ -33,9 +34,7 @@
         <button type="button"
           class="rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:bg-slate-900 dark:text-slate-500 dark:hover:text-slate-400"
           onclick="closeModal('{{ html_id|default:'modal-default' }}')" aria-label="{% trans 'Close' %}">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          {% icon "x" size="lg" %}
         </button>
         {% endif %}
       </div>

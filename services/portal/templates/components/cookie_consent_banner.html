@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n ui_components %}
 {# Cookie Consent Banner - GDPR Compliant (Portal) #}
 {# Included in base.html before closing </body> tag #}
 
@@ -58,9 +58,7 @@
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-white">{% trans "Cookie Preferences" %}</h3>
                 <button @click="showPreferences = false" class="text-slate-400 hover:text-white" aria-label="{% trans 'Close preferences' %}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+                    {% icon "x" %}
                 </button>
             </div>
 

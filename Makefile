@@ -3,7 +3,7 @@
 # ===============================================================================
 # Enhanced for Platform/Portal separation with scoped PYTHONPATH security
 
-.PHONY: help install check-env dev dev-e2e dev-e2e-bg dev-platform dev-portal dev-all test test-platform test-portal test-integration test-e2e test-with-e2e test-e2e-platform test-e2e-portal test-e2e-orm test-security install-frontend build-css watch-css check-css-tooling migrate fixtures fixtures-light clean lint lint-platform lint-portal lint-security lint-credentials lint-audit type-check pre-commit infra-init infra-plan infra-dev infra-staging infra-prod infra-destroy-dev deploy-dev deploy-staging deploy-prod i18n-extract i18n-compile translate translate-platform translate-portal translate-ai translate-ai-platform translate-ai-portal translate-review translate-apply translate-diff translate-stats translate-stats-platform translate-stats-portal
+.PHONY: help install check-env dev dev-e2e dev-e2e-bg dev-platform dev-portal dev-all test test-platform test-portal test-integration test-e2e test-with-e2e test-e2e-platform test-e2e-portal test-e2e-orm test-security install-frontend build-css watch-css check-css-tooling migrate fixtures fixtures-light clean lint lint-platform lint-portal lint-security lint-credentials lint-audit type-check pre-commit infra-init infra-plan infra-dev infra-staging infra-prod infra-destroy-dev deploy-dev deploy-staging deploy-prod i18n-extract i18n-compile translate translate-platform translate-portal translate-ai translate-ai-platform translate-ai-portal translate-review translate-apply translate-diff translate-stats translate-stats-platform translate-stats-portal audit-a11y audit-a11y-strict audit-dark-mode audit-dark-mode-strict
 
 # ===============================================================================
 # SCOPED PYTHON ENVIRONMENTS 🔒
@@ -579,7 +579,27 @@ lint-templates:
 lint-templates-strict:
 	@echo "🎨 [Templates] Strict scan (all codes block)..."
 	@$(VENV_DIR)/bin/python scripts/lint_template_components.py \
-		--fail-on TMPL001,TMPL002,TMPL003,TMPL004,TMPL005,TMPL006,TMPL007,TMPL008
+		--fail-on TMPL001,TMPL002,TMPL003,TMPL004,TMPL005,TMPL006,TMPL007,TMPL008,TMPL009
+
+audit-a11y:
+	@echo "♿ [A11Y] Accessibility audit (WCAG AA)..."
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@$(VENV_DIR)/bin/python scripts/audit_accessibility.py --verbose || true
+	@echo "⚠️  (run 'make audit-a11y-strict' to fail on critical+serious)"
+
+audit-a11y-strict:
+	@echo "♿ [A11Y] Strict accessibility audit..."
+	@$(VENV_DIR)/bin/python scripts/audit_accessibility.py --verbose --fail-on critical,serious
+
+audit-dark-mode:
+	@echo "🌙 [DarkMode] Dark mode completeness audit..."
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@$(VENV_DIR)/bin/python scripts/audit_dark_mode.py --verbose || true
+	@echo "⚠️  (run 'make audit-dark-mode-strict' to fail on blockers)"
+
+audit-dark-mode-strict:
+	@echo "🌙 [DarkMode] Strict dark mode audit..."
+	@$(VENV_DIR)/bin/python scripts/audit_dark_mode.py --verbose --fail-on blocker
 
 # ===============================================================================
 # TYPE CHECKING 🏷️

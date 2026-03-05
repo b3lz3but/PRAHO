@@ -660,18 +660,24 @@ Track progress per template as work proceeds. Update this table as templates are
 | `static/js/components/toast.js` | C.1 | ✅ Complete | epic | `showToast()` API; XSS-safe, auto-dismiss, stack management |
 | `tests/ui/test_design_system_filters.py` | C.2 | ✅ Complete | epic | 87 tests for status/icon/label filters |
 | `tests/ui/test_component_*.py` | C.2 | ✅ Complete | epic | 226 new tests: badge, button, icon, page primitives, XSS |
+| `scripts/check_component_parity.py` | C.3 | ✅ Complete | epic | Compares 18 shared components; `.component-parity-ignore` for intentional divergence |
+| `make css-audit` | C.4 | ✅ Complete | epic | Portal CSS 17 KB gzipped (target ≤ 50 KB); bundle size gate |
+| `scripts/lint_template_components.py` | D.1 | ✅ Complete | epic | 8 rules (TMPL001-008); `make lint-templates` + pre-commit hook |
+| `styleguide/index.html` | D.2 | ✅ Complete | epic | 12 sections, DEBUG-only, English text, sidebar nav |
+| `scripts/audit_accessibility.py` | D.3 | ✅ Complete | epic | 10 rules (A11Y001-010); `make audit-a11y` — 168 findings baseline |
+| `scripts/audit_dark_mode.py` | D.4 | ✅ Complete | epic | 5 rules (DM001-005); `make audit-dark-mode` — 260 findings baseline |
 
 ---
 
 ## Recommended Execution Order
 
 ```
-Week 1-2:  A.1 (auth forms) + A.3 (style cleanup) + A.4 (mobile header) + A.5 (icons)
-Week 2-3:  A.2 (billing detail)
-Week 3-5:  B.1 (page primitives) + B.2 (tokens) + B.3 (status mapping)
-Week 5-7:  C.1 (JS consolidation) + C.2 (test suite)
-Week 7-8:  C.3 (cross-service parity) + C.4 (CSS audit)
-Ongoing:   D.1 (lint hook) → D.2 (styleguide) → D.3 (a11y) → D.4 (dark mode)
+Week 1-2:  A.1 (auth forms) + A.3 (style cleanup) + A.4 (mobile header) + A.5 (icons) ✅
+Week 2-3:  A.2 (billing detail) ✅
+Week 3-5:  B.1 (page primitives) + B.2 (tokens) + B.3 (status mapping) ✅
+Week 5-7:  C.1 (JS consolidation) + C.2 (test suite) ✅
+Week 7-8:  C.3 (cross-service parity) + C.4 (CSS audit) ✅
+Ongoing:   D.1 (lint hook) ✅ → D.2 (styleguide) ✅ → D.3 (a11y) ✅ → D.4 (dark mode) ✅
 ```
 
 ### Dependency Graph

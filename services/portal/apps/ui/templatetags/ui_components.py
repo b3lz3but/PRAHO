@@ -1223,6 +1223,7 @@ _ICON_PATHS: dict[str, str | tuple[str, ...]] = {
     "chevron-down": "M19 9l-7 7-7-7",
     "chevron-up": "M5 15l7-7 7 7",
     "chevron-right": "M9 5l7 7-7 7",
+    "menu": "M4 6h16M4 12h16M4 18h16",
     "arrow-up": "M5 10l7-7m0 0l7 7m-7-7v18",
     "arrow-down": "M19 14l-7 7m0 0l-7-7m7 7V3",
     "arrow-right": "M14 5l7 7m0 0l-7 7m7-7H3",

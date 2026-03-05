@@ -53,7 +53,7 @@ The portal uses a **single canonical icon system**: the `{% icon %}` template ta
 | Source | Status | Where |
 |--------|--------|-------|
 | `{% icon "name" %}` template tag | ✅ **Standard** | All templates (feature + component) |
-| Raw `<svg>` inside `components/*.html` | ✅ Allowed | Component internals only (generates the SVG output) |
+| Raw `<svg>` inside `components/*.html` | ⚠️ Restricted | **Only** complex visuals (spinners/charts/illustrations) listed in `.component-svg-allowlist` |
 | Raw `<svg>` in feature templates | ❌ **Prohibited** | Must migrate to `{% icon %}` tag |
 | Emoji characters in UI text | ❌ **Prohibited** | Replace with `{% icon %}` or remove entirely |
 | Emoji defaults in Python dataclasses | ❌ **Prohibited** | Replace with `{% icon %}` reference or empty string |
@@ -70,6 +70,15 @@ The portal uses a **single canonical icon system**: the `{% icon %}` template ta
 - The `{% icon %}` tag supports 35+ Heroicon names (see `ui_components.py` ICON_SVGS dict).
 - All icon sizing via Tailwind utility classes (`w-4 h-4`, `w-5 h-5`, `w-6 h-6`).
 - New icons: add to the `ICON_SVGS` dictionary in `ui_components.py`, not as raw SVG in templates.
+- Icon-like SVG in component templates must also use `{% icon %}`.
+
+### 4.2.1 Raw SVG Exception Process
+
+Raw `<svg>` is allowed only for complex visuals that cannot be represented cleanly via `{% icon %}` (for example animated spinners).
+
+1. Add one entry in `.component-svg-allowlist` with path + reason.
+2. Keep scope minimal; prefer migrating to `{% icon %}`.
+3. Ensure `scripts/lint_template_components.py` passes with no unexpected `TMPL009` findings.
 
 ### 4.3 Current Violations (to fix)
 
