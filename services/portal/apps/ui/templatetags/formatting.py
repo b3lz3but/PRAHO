@@ -550,6 +550,26 @@ def cents_to_currency(value: int | float | Decimal) -> Decimal:
 
 
 @register.filter
+def format_currency(value: int | float | Decimal, currency: str = "RON") -> str:
+    """
+    Convenience filter: cents → formatted Romanian currency in one step.
+
+    Combines cents_to_currency + romanian_currency into a single call.
+
+    Usage:
+        {{ invoice.total_cents|format_currency:invoice.currency.code }}
+        {{ 11900|format_currency:"RON" }}  -> "119,00 RON"
+        {{ 5000|format_currency:"EUR" }}   -> "50,00 EUR"
+
+    Args:
+        value: Amount in cents (integer)
+        currency: Currency code (RON, EUR, USD)
+    """
+    converted = cents_to_currency(value)
+    return romanian_currency(converted, currency)
+
+
+@register.filter
 def as_percentage(value: TemplateNumeric) -> Decimal:
     """
     Convert a proportion (0.21) to a percentage (21).
