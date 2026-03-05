@@ -859,6 +859,11 @@ _STATUS_VARIANT_MAP: dict[str, str] = {
     "closed": "secondary",
     "inactive": "secondary",
     "unknown": "secondary",
+    # Customer membership roles
+    "owner": "success",
+    "billing": "primary",
+    "tech": "info",
+    "viewer": "secondary",
 }
 
 # ⚡ O(1) lookup — status → icon name (subset with meaningful icons)

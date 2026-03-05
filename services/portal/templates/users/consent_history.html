@@ -6,22 +6,11 @@
 
 {% block content %}
 <div class="px-4 max-w-4xl mx-auto">
-  <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-bold text-white romanian-flag">
-      {% icon "document" size="lg" css_class="text-white" %} {% trans 'Consent History' %}
-    </h1>
-    <p class="mt-2 text-sm text-slate-400">
-      {% trans 'View and manage your GDPR consents and marketing preferences' %}
-    </p>
-  </div>
+  {% trans 'Consent History' as ph_title %}{% trans 'View and manage your GDPR consents and marketing preferences' as ph_sub %}
+  {% page_header title=ph_title subtitle=ph_sub icon="document" %}{% end_page_header %}
 
-  <!-- Current Consent Status -->
-  <div class="bg-slate-800 shadow-sm ring-1 ring-slate-700 rounded-lg mb-6">
-    <div class="p-6">
-      <h3 class="text-lg font-medium text-white mb-4">
-        {% icon "chart" size="md" css_class="text-white" %} {% trans 'Current Consent Status' %}
-      </h3>
+  {% trans 'Current Consent Status' as sc_ccs_title %}
+  {% section_card title=sc_ccs_title icon="chart" css_class="mb-6" %}
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Data Processing Consent -->
@@ -66,15 +55,10 @@
           </p>
         </div>
       </div>
-    </div>
-  </div>
+  {% end_section_card %}
 
-  <!-- Consent History Timeline -->
-  <div class="bg-slate-800 shadow-sm ring-1 ring-slate-700 rounded-lg mb-6">
-    <div class="p-6">
-      <h3 class="text-lg font-medium text-white mb-4">
-        {% icon "clock" size="md" css_class="text-white" %} {% trans 'Data Processing Consent Timeline' %}
-      </h3>
+  {% trans 'Data Processing Consent Timeline' as sc_dpct_title %}
+  {% section_card title=sc_dpct_title icon="clock" css_class="mb-6" %}
 
       <div class="space-y-4">
         {% for consent in consent_history %}
@@ -109,16 +93,12 @@
         </div>
         {% endfor %}
       </div>
-    </div>
-  </div>
+  {% end_section_card %}
 
   <!-- Cookie Consent History -->
   {% if cookie_consent_history %}
-  <div class="bg-slate-800 shadow-sm ring-1 ring-slate-700 rounded-lg mb-6">
-    <div class="p-6">
-      <h3 class="text-lg font-medium text-white mb-4">
-        &#127850; {% trans 'Cookie Consent History' %}
-      </h3>
+  {% trans 'Cookie Consent History' as sc_cch_title %}
+  {% section_card title=sc_cch_title icon="settings" css_class="mb-6" %}
 
       <div class="space-y-4">
         {% for cookie in cookie_consent_history %}
@@ -162,16 +142,11 @@
         </div>
         {% endfor %}
       </div>
-    </div>
-  </div>
+  {% end_section_card %}
   {% endif %}
 
-  <!-- Manage Preferences -->
-  <div class="bg-slate-800 shadow-sm ring-1 ring-slate-700 rounded-lg mb-6">
-    <div class="p-6">
-      <h3 class="text-lg font-medium text-white mb-4">
-        {% icon "settings" size="md" css_class="text-white" %} {% trans 'Manage Preferences' %}
-      </h3>
+  {% trans 'Manage Preferences' as sc_mp_title %}
+  {% section_card title=sc_mp_title icon="settings" css_class="mb-6" %}
 
       <div class="space-y-3">
         <div class="p-4 bg-slate-700 rounded-lg">
@@ -208,15 +183,10 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+  {% end_section_card %}
 
-  <!-- Legal Information -->
-  <div class="bg-slate-800 shadow-sm ring-1 ring-slate-700 rounded-lg">
-    <div class="p-6">
-      <h3 class="text-lg font-medium text-white mb-4">
-        {% icon "document" size="md" css_class="text-white" %} {% trans 'Legal Information' %}
-      </h3>
+  {% trans 'Legal Information' as sc_li_title %}
+  {% section_card title=sc_li_title icon="document" %}
 
       <div class="text-sm text-slate-300 space-y-2">
         <p>
@@ -232,8 +202,7 @@
           {% icon "flag" size="sm" css_class="inline text-blue-400" %} {% trans 'GDPR Article 7 - Conditions for consent | Romanian Law 190/2018' %}
         </p>
       </div>
-    </div>
-  </div>
+  {% end_section_card %}
 
   <!-- Back to Privacy Dashboard -->
   <div class="mt-6 text-center">
