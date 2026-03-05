@@ -69,8 +69,9 @@ class StatusVariantFilterTests(unittest.TestCase):
     def test_waiting_on_customer_returns_warning(self) -> None:
         self.assertEqual(status_variant("waiting_on_customer"), "warning")
 
-    def test_processing_returns_warning(self) -> None:
-        self.assertEqual(status_variant("processing"), "warning")
+    def test_processing_returns_info(self) -> None:
+        """processing moved to info per design spec (Finding 2)."""
+        self.assertEqual(status_variant("processing"), "info")
 
     def test_refunded_returns_warning(self) -> None:
         self.assertEqual(status_variant("refunded"), "warning")
@@ -122,8 +123,9 @@ class StatusVariantFilterTests(unittest.TestCase):
 
     # ── secondary group ───────────────────────────────────────────────────────
 
-    def test_cancelled_returns_secondary(self) -> None:
-        self.assertEqual(status_variant("cancelled"), "secondary")
+    def test_cancelled_returns_danger(self) -> None:
+        """cancelled moved to danger per design spec (Finding 2)."""
+        self.assertEqual(status_variant("cancelled"), "danger")
 
     def test_terminated_returns_secondary(self) -> None:
         self.assertEqual(status_variant("terminated"), "secondary")
