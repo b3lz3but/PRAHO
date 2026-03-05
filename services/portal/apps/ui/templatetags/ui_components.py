@@ -1221,6 +1221,7 @@ _ICON_PATHS: dict[str, str | tuple[str, ...]] = {
     # ── A.5 additions: migrated from raw <svg> in feature templates ──
     "chevron-left": "M15 19l-7-7 7-7",
     "chevron-down": "M19 9l-7 7-7-7",
+    "chevron-up": "M5 15l7-7 7 7",
     "chevron-right": "M9 5l7 7-7 7",
     "arrow-up": "M5 10l7-7m0 0l7 7m-7-7v18",
     "arrow-down": "M19 14l-7 7m0 0l-7-7m7 7V3",

@@ -21,7 +21,7 @@ ALL_ICON_NAMES = [
     "receipt", "plus", "orders", "lock", "refresh", "search", "external",
     "download", "globe", "server", "mail", "arrow-left", "phone", "info",
     "ban", "credit-card", "question", "home", "book", "chart", "currency",
-    "chevron-left", "chevron-down", "chevron-right", "arrow-up", "arrow-down",
+    "chevron-left", "chevron-down", "chevron-up", "chevron-right", "arrow-up", "arrow-down",
     "arrow-right", "map-pin", "edit", "exclamation-circle", "paperclip",
     "shield-check", "swap", "pause", "x-circle", "send", "adjustments",
     "flag", "eye",

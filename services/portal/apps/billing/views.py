@@ -32,7 +32,7 @@ INVOICE_STATUS_VARIANT_MAP: dict[str, str] = {
     "void": "secondary",
     "refunded": "warning",
     "sent": "primary",
-    "cancelled": "secondary",
+    "cancelled": "danger",
 }
 
 PROFORMA_STATUS_VARIANT_MAP: dict[str, str] = {
@@ -41,7 +41,7 @@ PROFORMA_STATUS_VARIANT_MAP: dict[str, str] = {
     "accepted": "success",
     "expired": "danger",
     "converted": "success",
-    "cancelled": "secondary",
+    "cancelled": "danger",
 }
 
 PROFORMA_STATUS_ICON_MAP: dict[str, str] = {
