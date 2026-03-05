@@ -44,23 +44,7 @@
             {{ item.text }}
             {% if item.badge %}
               <span class="ml-auto">
-                {% if item.badge.variant == 'success' %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-900 text-green-200">
-                    {{ item.badge.text }}
-                  </span>
-                {% elif item.badge.variant == 'warning' %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-900 text-yellow-200">
-                    {{ item.badge.text }}
-                  </span>
-                {% elif item.badge.variant == 'danger' %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-900 text-red-200">
-                    {{ item.badge.text }}
-                  </span>
-                {% else %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700 text-slate-300">
-                    {{ item.badge.text }}
-                  </span>
-                {% endif %}
+                {% badge item.badge.text variant=item.badge.variant size="xs" %}
               </span>
             {% endif %}
           </a>

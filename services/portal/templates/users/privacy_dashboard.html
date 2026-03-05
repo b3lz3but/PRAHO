@@ -39,13 +39,9 @@
                 </div>
               </div>
               {% if profile.gdpr_consent_date %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  {% icon "check" size="xs" %} {% trans 'Active' %}
-                </span>
+                {% badge "Active" variant="success" icon="check" size="xs" rounded="full" %}
               {% else %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                  {% icon "x" size="xs" %} {% trans 'Inactive' %}
-                </span>
+                {% badge "Inactive" variant="danger" icon="x" size="xs" rounded="full" %}
               {% endif %}
             </div>
 
@@ -59,13 +55,9 @@
                 </div>
               </div>
               {% if profile.accepts_marketing %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  {% icon "check" size="xs" %} {% trans 'Enabled' %}
-                </span>
+                {% badge "Enabled" variant="primary" icon="check" size="xs" rounded="full" %}
               {% else %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                  {% icon "ban" size="xs" %} {% trans 'Disabled' %}
-                </span>
+                {% badge "Disabled" variant="secondary" icon="ban" size="xs" rounded="full" %}
               {% endif %}
             </div>
           </div>

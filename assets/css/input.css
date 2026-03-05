@@ -15,6 +15,46 @@
   --bg-elev: #111217;
   --content: #e6e8eb;
   --primary: hsl(var(--brand-h) var(--brand-s) var(--brand-l));
+
+  /* -----------------------------------------------------------------------
+     TYPOGRAPHY TOKENS 🔤
+     ----------------------------------------------------------------------- */
+  --font-size-page-title: 1.875rem;
+  /* 30px — main page heading */
+  --font-size-section-title: 1.125rem;
+  /* 18px — card / section heading */
+  --font-size-body: 0.875rem;
+  /* 14px — default body text (sm) */
+  --font-size-meta: 0.75rem;
+  /* 12px — timestamps, labels (xs) */
+  --font-size-caption: 0.625rem;
+  /* 10px — fine print, badges */
+
+  --font-weight-page-title: 700;
+  /* bold */
+  --font-weight-section-title: 600;
+  /* semibold */
+  --font-weight-body: 400;
+  /* normal */
+
+  --line-height-page-title: 2.25rem;
+  /* 36px */
+  --line-height-section-title: 1.75rem;
+  /* 28px */
+  --line-height-body: 1.25rem;
+  /* 20px */
+
+  /* -----------------------------------------------------------------------
+     SPACING TOKENS 📏
+     ----------------------------------------------------------------------- */
+  --space-page-gutter: 1rem;
+  /* px-4 default, grows via breakpoints */
+  --space-section-stack: 1.5rem;
+  /* gap between major sections (6) */
+  --space-card-padding: 1.5rem;
+  /* p-6 inside cards */
+  --space-field-stack: 1rem;
+  /* gap between form fields (4) */
 }
 
 /* ===============================================================================
@@ -28,6 +68,92 @@
 .romanian-flag::before {
   content: "🇷🇴";
   margin-right: 0.5rem;
+}
+
+/* ===============================================================================
+   TYPOGRAPHY UTILITY CLASSES 🔤
+   ===============================================================================
+   Named classes consuming the CSS custom-property tokens above.
+   Use these instead of raw Tailwind size/weight combos for portal headings,
+   body text, and meta labels so the design stays consistent and can be
+   updated from a single location.
+   =============================================================================== */
+
+.text-page-title {
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-page-title);
+  line-height: var(--line-height-page-title);
+  color: #ffffff;
+}
+
+.text-section-title {
+  font-size: var(--font-size-section-title);
+  font-weight: var(--font-weight-section-title);
+  line-height: var(--line-height-section-title);
+  color: #ffffff;
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  color: #94a3b8;
+  /* slate-400 */
+}
+
+.text-meta {
+  font-size: var(--font-size-meta);
+  font-weight: var(--font-weight-body);
+  line-height: 1rem;
+  color: #64748b;
+  /* slate-500 */
+}
+
+.text-caption {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-body);
+  line-height: 0.875rem;
+  color: #64748b;
+  /* slate-500 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===============================================================================
+   SPACING UTILITY CLASSES 📏
+   ===============================================================================
+   Named spacing classes for consistent page layout rhythm.
+   =============================================================================== */
+
+.space-page-gutter {
+  padding-left: var(--space-page-gutter);
+  padding-right: var(--space-page-gutter);
+}
+
+@media (min-width: 640px) {
+  .space-page-gutter {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .space-page-gutter {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.space-section-stack>*+* {
+  margin-top: var(--space-section-stack);
+}
+
+.space-card-padding {
+  padding: var(--space-card-padding);
+}
+
+.space-field-stack>*+* {
+  margin-top: var(--space-field-stack);
 }
 
 /* ===============================================================================

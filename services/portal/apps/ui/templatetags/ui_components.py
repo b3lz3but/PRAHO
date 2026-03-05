@@ -10,7 +10,10 @@ from typing import Any
 
 from django import template
 from django.forms import CheckboxInput, Select, Textarea
+from django.template.base import FilterExpression
+from django.template.base import token_kwargs as django_token_kwargs
 from django.utils.html import format_html, mark_safe  # For XSS prevention
+from django.utils.translation import gettext_lazy as _
 
 from apps.common.constants import FILE_SIZE_CONVERSION_FACTOR
 
@@ -620,6 +623,325 @@ def modal(modal_id: str, title: str, *, config: ModalConfig | None = None, **kwa
         "css_class": config.css_class,
         "html_id": config.html_id,
     }
+
+
+# ===============================================================================
+# PAGE-SHELL PRIMITIVES (B.1) — Reusable layout blocks
+# ===============================================================================
+
+
+@dataclass
+class PageHeaderConfig:
+    """Parameter object for page_header block tag."""
+
+    title: str = ""
+    subtitle: str = ""
+    icon: str = ""
+    css_class: str = ""
+
+
+class PageHeaderNode(template.Node):
+    """Renders a page header with an actions slot between the opening and closing tags."""
+
+    def __init__(
+        self,
+        kwargs: dict[str, FilterExpression],
+        nodelist_actions: template.NodeList,
+    ) -> None:
+        self.kwargs = kwargs
+        self.nodelist_actions = nodelist_actions
+
+    def render(self, context: template.Context) -> str:
+        resolved: dict[str, Any] = {k: v.resolve(context) for k, v in self.kwargs.items()}
+        actions_html = self.nodelist_actions.render(context)
+
+        t = context.template.engine.get_template("components/page_header.html")
+        with context.update(
+            {
+                "ph_title": resolved.get("title", ""),
+                "ph_subtitle": resolved.get("subtitle", ""),
+                "ph_icon": resolved.get("icon", ""),
+                "ph_css_class": resolved.get("css_class", ""),
+                "ph_actions": mark_safe(actions_html),  # noqa: S308  — rendered from Django templates, not user input
+            }
+        ):
+            return t.render(context)
+
+
+@register.tag("page_header")
+def do_page_header(parser: template.base.Parser, token: template.base.Token) -> PageHeaderNode:
+    """
+    Block tag for standardized page headers with actions slot.
+
+    Usage:
+        {% page_header title="Invoice #001" subtitle="Invoice details" icon="document" %}
+          <a href="/pdf/">Download PDF</a>
+          {% button "Edit" variant="primary" %}
+        {% end_page_header %}
+
+        {# Minimal — no actions #}
+        {% page_header title="Dashboard" subtitle="Welcome back" %}{% end_page_header %}
+    """
+    bits = token.split_contents()
+    remaining_bits = bits[1:]
+    kwargs = django_token_kwargs(remaining_bits, parser)
+    if remaining_bits:
+        raise template.TemplateSyntaxError(f"{bits[0]} received an invalid argument: {remaining_bits[0]}")
+
+    nodelist = parser.parse(("end_page_header",))
+    parser.delete_first_token()
+    return PageHeaderNode(kwargs, nodelist)
+
+
+class SectionCardNode(template.Node):
+    """Renders a section card with a content slot between opening and closing tags."""
+
+    def __init__(
+        self,
+        kwargs: dict[str, FilterExpression],
+        nodelist_content: template.NodeList,
+    ) -> None:
+        self.kwargs = kwargs
+        self.nodelist_content = nodelist_content
+
+    def render(self, context: template.Context) -> str:
+        resolved: dict[str, Any] = {k: v.resolve(context) for k, v in self.kwargs.items()}
+        content_html = self.nodelist_content.render(context)
+
+        t = context.template.engine.get_template("components/section_card.html")
+        with context.update(
+            {
+                "sc_title": resolved.get("title", ""),
+                "sc_icon": resolved.get("icon", ""),
+                "sc_collapsible": resolved.get("collapsible", False),
+                "sc_padding": resolved.get("padding", "p-6"),
+                "sc_css_class": resolved.get("css_class", ""),
+                "sc_html_id": resolved.get("html_id", ""),
+                "sc_content": mark_safe(content_html),  # noqa: S308
+            }
+        ):
+            return t.render(context)
+
+
+@register.tag("section_card")
+def do_section_card(parser: template.base.Parser, token: template.base.Token) -> SectionCardNode:
+    """
+    Block tag for standardized section cards with titled headers.
+
+    Usage:
+        {% section_card title="Customer Details" icon="user" %}
+          <p>Card content here...</p>
+        {% end_section_card %}
+
+        {% section_card title="Line Items" icon="clipboard" collapsible=True padding="p-4 sm:p-6" %}
+          <table>...</table>
+        {% end_section_card %}
+    """
+    bits = token.split_contents()
+    remaining_bits = bits[1:]
+    kwargs = django_token_kwargs(remaining_bits, parser)
+    if remaining_bits:
+        raise template.TemplateSyntaxError(f"{bits[0]} received an invalid argument: {remaining_bits[0]}")
+
+    nodelist = parser.parse(("end_section_card",))
+    parser.delete_first_token()
+    return SectionCardNode(kwargs, nodelist)
+
+
+@register.inclusion_tag("components/stat_tile.html")
+def stat_tile(  # noqa: PLR0913
+    label: str,
+    value: str,
+    *,
+    icon: str = "",
+    meta: str = "",
+    trend: str = "",
+    variant: str = "default",
+    css_class: str = "",
+) -> dict[str, Any]:
+    """
+    Stat metric tile for dashboards and detail pages.
+
+    Usage:
+        {% stat_tile "Total Due" "1.234,56 RON" icon="currency" variant="warning" meta="Due: 15.03.2026" %}
+        {% stat_tile "Active Services" "12" icon="server" variant="success" %}
+        {% stat_tile "Open Tickets" "3" icon="chat" trend="+2" %}
+    """
+    return {
+        "label": label,
+        "value": value,
+        "icon": icon,
+        "meta": meta,
+        "trend": trend,
+        "variant": variant,
+        "css_class": css_class,
+    }
+
+
+@register.inclusion_tag("components/empty_state.html")
+def empty_state(  # noqa: PLR0913
+    title: str,
+    *,
+    icon: str = "inbox",
+    body: str = "",
+    action_url: str = "",
+    action_text: str = "",
+    css_class: str = "",
+) -> dict[str, Any]:
+    """
+    Empty state placeholder for lists and tables with no data.
+
+    Usage:
+        {% empty_state "No invoices" icon="document" body="No invoices issued yet." action_url="/orders/" action_text="Browse products" %}
+        {% empty_state "No tickets" icon="chat" body="You haven't opened any support tickets." %}
+    """
+    return {
+        "title": title,
+        "icon": icon,
+        "body": body,
+        "action_url": action_url,
+        "action_text": action_text,
+        "css_class": css_class,
+    }
+
+
+# ===============================================================================
+# STATUS LABEL / VARIANT / ICON MAPPING (B.3)
+# ===============================================================================
+
+# ⚡ O(1) lookup — human-readable labels for statuses that don't title-case well
+_STATUS_LABEL_MAP: dict[str, str] = {
+    "waiting_on_customer": _("Waiting on You"),
+    "in_progress": _("In Progress"),
+    "not_consented": _("Not Consented"),
+    "not consented": _("Not Consented"),
+}
+
+# ⚡ O(1) lookup — all known statuses across billing, services, orders, tickets
+_STATUS_VARIANT_MAP: dict[str, str] = {
+    # Positive / completed
+    "active": "success",
+    "paid": "success",
+    "healthy": "success",
+    "accepted": "success",
+    "completed": "success",
+    "resolved": "success",
+    "granted": "success",
+    "converted": "success",
+    "enabled": "success",
+    "consented": "success",
+    # Warning / pending
+    "pending": "warning",
+    "overdue": "danger",
+    "warning": "warning",
+    "waiting": "warning",
+    "waiting_on_customer": "warning",
+    "processing": "warning",
+    "not consented": "danger",
+    # Informational / in-progress
+    "draft": "info",
+    "issued": "primary",
+    "sent": "primary",
+    "open": "primary",
+    "in_progress": "primary",
+    "in progress": "primary",
+    "provisioning": "primary",
+    # Negative / cancelled
+    "cancelled": "secondary",
+    "suspended": "danger",
+    "terminated": "secondary",
+    "expired": "danger",
+    "void": "secondary",
+    "refunded": "warning",
+    "error": "danger",
+    "revoked": "danger",
+    # Neutral / unknown
+    "closed": "secondary",
+    "inactive": "secondary",
+    "unknown": "secondary",
+}
+
+# ⚡ O(1) lookup — status → icon name (subset with meaningful icons)
+_STATUS_ICON_MAP: dict[str, str] = {
+    "active": "check",
+    "paid": "check",
+    "completed": "check",
+    "resolved": "check",
+    "granted": "check",
+    "enabled": "check",
+    "healthy": "check",
+    "consented": "check",
+    "pending": "clock",
+    "waiting": "clock",
+    "waiting_on_customer": "clock",
+    "processing": "clock",
+    "expired": "clock",
+    "overdue": "alert",
+    "warning": "alert",
+    "suspended": "ban",
+    "cancelled": "x",
+    "terminated": "x",
+    "error": "alert",
+    "revoked": "x",
+    "provisioning": "lightning",
+    "open": "mail",
+    "in_progress": "lightning",
+    "in progress": "lightning",
+    "draft": "edit",
+    "sent": "mail",
+    "closed": "x",
+}
+
+
+@register.filter
+def status_variant(status: str) -> str:
+    """
+    Map any status string to a badge variant name.
+
+    Usage:
+        {% badge service.status_display variant=service.status|status_variant %}
+        {% badge ticket.status_display variant=ticket.status|status_variant rounded="full" %}
+
+    Returns: primary|secondary|success|warning|danger|info|default
+    """
+    if not status:
+        return "secondary"
+    return _STATUS_VARIANT_MAP.get(status.lower().strip(), "secondary")
+
+
+@register.filter
+def status_icon(status: str) -> str:
+    """
+    Map a status string to an icon name for use with {% badge %}.
+
+    Usage:
+        {% badge service.status|status_label variant=service.status|status_variant icon=service.status|status_icon %}
+
+    Returns: icon name string or "" if no icon mapped
+    """
+    if not status:
+        return ""
+    return _STATUS_ICON_MAP.get(status.lower().strip(), "")
+
+
+@register.filter
+def status_label(status: str) -> str:
+    """
+    Return a human-readable display label for a raw status code.
+
+    Handles underscore-separated codes (e.g. "waiting_on_customer" → "Waiting on You")
+    and falls back to title-cased output for unmapped statuses.
+
+    Usage:
+        {% badge ticket.status|status_label variant=ticket.status|status_variant %}
+    """
+    if not status:
+        return ""
+    key = status.lower().strip()
+    mapped = _STATUS_LABEL_MAP.get(key)
+    if mapped:
+        return str(mapped)
+    return status.replace("_", " ").title()
 
 
 @register.inclusion_tag("components/table_enhanced.html")

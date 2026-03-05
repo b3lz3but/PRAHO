@@ -539,21 +539,7 @@
                   <div class="bg-slate-600/30 rounded-lg p-4">
                     <div class="flex items-center justify-between mb-2">
                       <div class="text-sm font-medium text-slate-300">{% trans "Current Status" %}</div>
-                      {% if service.status == 'active' %}
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                          {% trans 'Active' %}
-                        </span>
-                      {% elif service.status == 'pending' %}
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          <span class="w-2 h-2 bg-yellow-400 rounded-full mr-1"></span>
-                          {% trans 'Pending' %}
-                        </span>
-                      {% else %}
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          {{ service.status_display }}
-                        </span>
-                      {% endif %}
+                      {% badge service.status|status_label variant=service.status|status_variant icon=service.status|status_icon size="xs" rounded="full" %}
                     </div>
                     <div class="text-xs text-slate-400">
                       {% trans "Last updated" %} {{ service.updated_at|date:"M d, Y H:i" }}
@@ -932,15 +918,7 @@
                     </div>
                   </div>
                   <div class="flex space-x-2">
-                    {% if domain.status == 'active' %}
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        {% trans "Active" %}
-                      </span>
-                    {% else %}
-                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {{ domain.status|title }}
-                      </span>
-                    {% endif %}
+                    {% badge domain.status|status_label variant=domain.status|status_variant size="xs" rounded="full" %}
                   </div>
                 </div>
                 {% endfor %}
