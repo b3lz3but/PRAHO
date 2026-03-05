@@ -534,9 +534,22 @@ class PortalServiceHMACMiddleware:
                 portal_id_for_rl, client_ip
             ):
                 logger.warning(f"🚨 [HMAC Auth] Rate limit exceeded for portal={portal_id_for_rl} ip={client_ip}")
-                return HttpResponse(
-                    json.dumps({"error": "Too Many Requests"}), status=429, content_type="application/json"
+                retry_after = max(1, int(self._rl_window))
+                response = HttpResponse(
+                    json.dumps(
+                        {
+                            "success": False,
+                            "error": "Too many requests",
+                            "detail": "Too Many Requests",
+                            "retry_after": retry_after,
+                            "status": 429,
+                        }
+                    ),
+                    status=429,
+                    content_type="application/json",
                 )
+                response["Retry-After"] = str(retry_after)
+                return response
 
             # Validate HMAC signature
             is_valid, error_msg = self._validate_hmac_signature(request)

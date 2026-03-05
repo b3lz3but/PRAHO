@@ -2,7 +2,9 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import time
+from unittest.mock import patch
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -10,7 +12,15 @@ from django.test import TestCase, RequestFactory, override_settings
 
 from apps.common.middleware import PortalServiceHMACMiddleware
 
+LOCMEM_TEST_CACHE = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "hmac-middleware-tests",
+    }
+}
 
+
+@override_settings(CACHES=LOCMEM_TEST_CACHE)
 class PortalHMACTests(TestCase):
     def setUp(self) -> None:
         self.factory = RequestFactory()
@@ -46,7 +56,7 @@ class PortalHMACTests(TestCase):
         method = 'POST'
         raw_path = '/api/test/?b=2&a=1'
         portal_id = 'portal-xyz'
-        nonce = 'nonce-123'
+        nonce = 'nonce-1234567890-abcdefghijklmnopqrstuvwxyz'
         timestamp = str(ts)
 
         # Compute signature
@@ -73,7 +83,7 @@ class PortalHMACTests(TestCase):
         method = 'POST'
         raw_path = '/api/test/?x=1'
         portal_id = 'portal-xyz'
-        nonce = 'nonce-abc'
+        nonce = 'nonce-abc1234567890-abcdefghijklmnopqrstuvwxyz'
         timestamp = str(ts)
 
         # Intentionally wrong signature
@@ -102,7 +112,7 @@ class PortalHMACTests(TestCase):
         method = 'POST'
         raw_path = '/api/test/'
         portal_id = 'portal-xyz'
-        nonce = 'nonce-xyz'
+        nonce = 'nonce-xyz1234567890-abcdefghijklmnopqrstuvwxyz'
         header_ts = '222.0'
         signature = self._sign(method, raw_path, body, portal_id, nonce, header_ts)
 
@@ -124,7 +134,7 @@ class PortalHMACTests(TestCase):
         method = 'POST'
         raw_path = '/api/test/'
         portal_id = 'portal-rl'
-        nonce_base = 'nonce-rl-'
+        nonce_base = 'nonce-rl-abcdefghijklmnopqrstuvwxyz-'
         ts = str(time.time())
 
         def make_req(i: int):
@@ -139,12 +149,18 @@ class PortalHMACTests(TestCase):
             return req
 
         middleware = PortalServiceHMACMiddleware(lambda req: HttpResponse('ok', status=200))
-        r1 = middleware(make_req(1))
-        r2 = middleware(make_req(2))
-        r3 = middleware(make_req(3))
+        with patch.dict(os.environ, {"RATELIMIT_ENABLE": "true"}):
+            r1 = middleware(make_req(1))
+            r2 = middleware(make_req(2))
+            r3 = middleware(make_req(3))
         self.assertEqual(r1.status_code, 200)
         self.assertEqual(r2.status_code, 200)
         self.assertEqual(r3.status_code, 429)
+        self.assertEqual(r3["Retry-After"], "60")
+        payload = json.loads(r3.content.decode())
+        self.assertEqual(payload["error"], "Too many requests")
+        self.assertEqual(payload["status"], 429)
+        self.assertEqual(payload["retry_after"], 60)
 
     @override_settings(PLATFORM_API_SECRET='unit-test-secret')
     def test_nonce_replay_rejected(self):
@@ -152,7 +168,7 @@ class PortalHMACTests(TestCase):
         method = 'POST'
         raw_path = '/api/test/'
         portal_id = 'portal-replay'
-        nonce = 'replay-n'
+        nonce = 'replay-n-1234567890-abcdefghijklmnopqrstuvwxyz'
         ts = str(time.time())
         body = json.dumps({'user_id': 1, 'customer_id': 2, 'timestamp': float(ts)}).encode()
         signature = self._sign(method, raw_path, body, portal_id, nonce, ts)
