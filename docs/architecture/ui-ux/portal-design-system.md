@@ -4,7 +4,7 @@
 > **Owner**: PRAHO Platform Team
 > **Last updated**: 2026-03-04
 > **Companion**: [portal-ui-ux-backlog.md](portal-ui-ux-backlog.md) (implementation roadmap)
-> **Branch**: `feat/ui-ux-design-system`
+> **Branch**: `feat/ui-ux-design-system-epic`
 
 ---
 
@@ -38,7 +38,7 @@ These are explicitly **out of scope** for this design system effort:
 |---|----------|-----------|
 | 1 | Canonical docs live in `docs/architecture/ui-ux/`; root-level files are pointer stubs | Clean namespace, discoverability via docs README |
 | 2 | Portal-first delivery; Platform alignment is optional after Portal A/B stabilization | De-risk scope; Portal has customer-facing urgency |
-| 3 | Single delivery branch (`feat/ui-ux-design-system`) with internal phase gates | Atomic merge; prevents partial design system in main |
+| 3 | Single delivery branch (`feat/ui-ux-design-system-epic`) with internal phase gates | Atomic merge; prevents partial design system in main |
 | 4 | Existing component layer is the base architecture — no framework switch | Minimal disruption, leverage 937L of existing tag code |
 | 5 | Migration prioritizes trust and conversion paths first | Auth → billing → catalog → service → profile |
 

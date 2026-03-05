@@ -651,11 +651,15 @@ Track progress per template as work proceeds. Update this table as templates are
 | `base.html` (styles/toast) | A.3 | ✅ Complete | epic | Inline styles removed; toast componentized |
 | `components/mobile_header.html` | A.3+A.4 | ✅ Complete | epic | Canonical header retained; JS extracted |
 | `components/button.html` | A.3 | ✅ Complete | epic | Inline styles moved to `assets/css/input.css` |
-| `tickets/ticket_create.html` | A.5 | 🟨 In progress | epic | Migrated to primitives; emoji cleanup still pending |
+| `tickets/ticket_create.html` | A.5 | ✅ Complete | epic | Emoji removed from priority options (Finding 3) |
 | `users/profile.html` | B.1 | ✅ Complete | epic | Migrated to `page_header` + `section_card` |
 | `services/service_detail.html` | B.1 | 🟨 In progress | epic | Major migration complete; remaining standardization pending |
 | `orders/product_catalog.html` | B.1 | 🟨 In progress | epic | Partial primitive adoption; more consolidation pending |
 | `orders/checkout.html` | B.1 | ⬜ Not started | — | |
+| `static/js/components/modal.js` | C.1 | ✅ Complete | epic | Vanilla JS IIFE; focus trap, Escape handler, HTMX integration |
+| `static/js/components/toast.js` | C.1 | ✅ Complete | epic | `showToast()` API; XSS-safe, auto-dismiss, stack management |
+| `tests/ui/test_design_system_filters.py` | C.2 | ✅ Complete | epic | 87 tests for status/icon/label filters |
+| `tests/ui/test_component_*.py` | C.2 | ✅ Complete | epic | 226 new tests: badge, button, icon, page primitives, XSS |
 
 ---
 
