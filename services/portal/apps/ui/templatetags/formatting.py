@@ -570,6 +570,26 @@ def format_currency(value: int | float | Decimal, currency: str = "RON") -> str:
 
 
 @register.filter
+def format_date(value: Any, format_type: str = "short") -> str:
+    """
+    Locale-aware date filter — design-system alias for romanian_date.
+
+    Preferred name for new templates; delegates to romanian_date internally
+    so both filters stay in sync.
+
+    Usage:
+        {{ invoice.issued_at|format_date }}           -> "15 ian. 2024"
+        {{ invoice.due_at|format_date:"long" }}       -> "15 ianuarie 2024"
+        {{ timestamp|format_date:"datetime" }}        -> "15 ian. 2024, 14:30"
+
+    Args:
+        value: Date/datetime object
+        format_type: short|long|datetime|time (same as romanian_date)
+    """
+    return romanian_date(value, format_type)
+
+
+@register.filter
 def as_percentage(value: TemplateNumeric) -> Decimal:
     """
     Convert a proportion (0.21) to a percentage (21).

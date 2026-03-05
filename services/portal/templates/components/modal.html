@@ -7,12 +7,7 @@
 {% load i18n %}
 
 {# Modal backdrop and container #}
-<div {% if html_id %}id="{{ html_id }}" {% else %}id="modal-{{ modal_id|default:'default' }}" {% endif %}
-  class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true"
-  style="{% if not show|default:False %}display: none;{% endif %}" {# HTMX attributes for dynamic loading #} {% if
-  hx_get %}hx-get="{{ hx_get }}" {% endif %} {% if hx_post %}hx-post="{{ hx_post }}" {% endif %} {% if hx_trigger
-  %}hx-trigger="{{ hx_trigger }}" {% endif %} {% if hx_target %}hx-target="{{ hx_target }}" {% endif %} {% if hx_swap
-  %}hx-swap="{{ hx_swap }}" {% endif %}>
+<div {% if html_id %}id="{{ html_id }}" {% else %}id="modal-{{ modal_id|default:'default' }}" {% endif %} class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="{% if not show|default:False %}display: none;{% endif %}"{% if hx_get %} hx-get="{{ hx_get }}"{% endif %}{% if hx_post %} hx-post="{{ hx_post }}"{% endif %}{% if hx_trigger %} hx-trigger="{{ hx_trigger }}"{% endif %}{% if hx_target %} hx-target="{{ hx_target }}"{% endif %}{% if hx_swap %} hx-swap="{{ hx_swap }}"{% endif %}>
   {# Background overlay #}
   <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
     <div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" aria-hidden="true"
@@ -81,13 +76,7 @@
         {% if primary_action %}
         <button type="button"
           class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto sm:text-sm"
-          {% if primary_action.hx_get %}hx-get="{{ primary_action.hx_get }}" {% endif %} {% if primary_action.hx_post
-          %}hx-post="{{ primary_action.hx_post }}" {% endif %} {% if primary_action.hx_target
-          %}hx-target="{{ primary_action.hx_target }}" {% endif %} {% if primary_action.hx_swap
-          %}hx-swap="{{ primary_action.hx_swap }}" {% endif %} {% if primary_action.onclick
-          %}onclick="{{ primary_action.onclick }}" {% endif %} {% if primary_action.form
-          %}form="{{ primary_action.form }}" {% endif %} {% if primary_action.type %}type="{{ primary_action.type }}" {%
-          endif %}>
+          {% if primary_action.hx_get %}hx-get="{{ primary_action.hx_get }}"{% endif %}{% if primary_action.hx_post %} hx-post="{{ primary_action.hx_post }}"{% endif %}{% if primary_action.hx_target %} hx-target="{{ primary_action.hx_target }}"{% endif %}{% if primary_action.hx_swap %} hx-swap="{{ primary_action.hx_swap }}"{% endif %}{% if primary_action.onclick %} onclick="{{ primary_action.onclick }}"{% endif %}{% if primary_action.form %} form="{{ primary_action.form }}"{% endif %}{% if primary_action.type %} type="{{ primary_action.type }}"{% endif %}>
           {{ primary_action.text|default:_("Confirm") }}
         </button>
         {% endif %}
