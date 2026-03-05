@@ -604,7 +604,7 @@ Phase C consolidates JS behavior and adds component parity checks — modal/toas
 
 ## Epic Branch Workflow
 
-**Branch**: `feat/ui-ux-design-system-epic`
+**Branch**: `feat/ui-ux-design-system`
 
 All design system work happens on a single epic branch with internal phase gates. This prevents partial design system states in `master`.
 
@@ -621,7 +621,7 @@ All design system work happens on a single epic branch with internal phase gates
 
 ```
 master ─────────────────────────────────────────────────────── ← merge after Phase C
-  └── feat/ui-ux-design-system-epic
+  └── feat/ui-ux-design-system
         ├── Phase A gate ✅ (DoD met) → start Phase B
         ├── Phase B gate ✅ (DoD met) → start Phase C
         └── Phase C gate ✅ (DoD met) → merge to master
@@ -642,19 +642,19 @@ Track progress per template as work proceeds. Update this table as templates are
 
 | Template | Phase | Status | PR | Notes |
 |----------|-------|--------|----|-------|
-| `users/login.html` | A.1 | ⬜ Not started | — | |
-| `users/register.html` | A.1 | ⬜ Not started | — | |
-| `users/password_reset.html` | A.1 | ⬜ Not started | — | |
-| `users/change_password.html` | A.1 | ⬜ Not started | — | |
-| `billing/invoice_detail.html` | A.2 | ⬜ Not started | — | |
-| `billing/proforma_detail.html` | A.2 | ⬜ Not started | — | |
-| `base.html` (styles/toast) | A.3 | ⬜ Not started | — | |
-| `components/mobile_header.html` | A.3+A.4 | ⬜ Not started | — | |
-| `components/button.html` | A.3 | ⬜ Not started | — | |
-| `tickets/ticket_create.html` | A.5 | ⬜ Not started | — | Emoji removal |
-| `users/profile.html` | B.1 | ⬜ Not started | — | |
-| `services/service_detail.html` | B.1 | ⬜ Not started | — | |
-| `orders/product_catalog.html` | B.1 | ⬜ Not started | — | |
+| `users/login.html` | A.1 | ✅ Complete | epic | Componentized via `form_field`/`form_checkbox` |
+| `users/register.html` | A.1 | ✅ Complete | epic | Componentized + JS extracted |
+| `users/password_reset.html` | A.1 | ✅ Complete | epic | Componentized with error summary |
+| `users/change_password.html` | A.1 | ✅ Complete | epic | Componentized; later migrated to page primitives |
+| `billing/invoice_detail.html` | A.2 | 🟨 In progress | epic | Badge + currency formatting migrated; follow-up cleanup pending |
+| `billing/proforma_detail.html` | A.2 | 🟨 In progress | epic | Badge + currency formatting migrated; follow-up cleanup pending |
+| `base.html` (styles/toast) | A.3 | ✅ Complete | epic | Inline styles removed; toast componentized |
+| `components/mobile_header.html` | A.3+A.4 | ✅ Complete | epic | Canonical header retained; JS extracted |
+| `components/button.html` | A.3 | ✅ Complete | epic | Inline styles moved to `assets/css/input.css` |
+| `tickets/ticket_create.html` | A.5 | 🟨 In progress | epic | Migrated to primitives; emoji cleanup still pending |
+| `users/profile.html` | B.1 | ✅ Complete | epic | Migrated to `page_header` + `section_card` |
+| `services/service_detail.html` | B.1 | 🟨 In progress | epic | Major migration complete; remaining standardization pending |
+| `orders/product_catalog.html` | B.1 | 🟨 In progress | epic | Partial primitive adoption; more consolidation pending |
 | `orders/checkout.html` | B.1 | ⬜ Not started | — | |
 
 ---

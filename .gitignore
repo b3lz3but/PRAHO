@@ -48,6 +48,7 @@ env/
 
 # IDE
 .idea/
+.vscode/settings.json
 *.swp
 *.swo
 *~
@@ -161,6 +162,7 @@ django_q.log
 # Logs directory - ignore all contents but keep the directory structure
 logs/*
 !logs/.gitkeep
+QA/logs/
 services/platform/logs/*
 !services/platform/logs/.gitkeep
 services/portal/logs/*
