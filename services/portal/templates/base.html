@@ -136,6 +136,9 @@
         </footer>
     </div>
 
+    {# Polite live region — catches async form validation errors and HTMX messages #}
+    <div id="async-error-region" role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
+
     {# Toast Messages (via toast component, auto-dismiss via Alpine.js) #}
     {% if messages %}
     <div id="toast-container" class="fixed top-4 lg:top-20 left-1/2 transform -translate-x-1/2 z-50 space-y-2" aria-live="assertive">

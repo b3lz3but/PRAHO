@@ -836,7 +836,7 @@ _STATUS_VARIANT_MAP: dict[str, str] = {
     "warning": "warning",
     "waiting": "warning",
     "waiting_on_customer": "warning",
-    "processing": "warning",
+    "processing": "info",
     "not consented": "danger",
     # Informational / in-progress
     "draft": "info",
@@ -847,7 +847,7 @@ _STATUS_VARIANT_MAP: dict[str, str] = {
     "in progress": "primary",
     "provisioning": "primary",
     # Negative / cancelled
-    "cancelled": "secondary",
+    "cancelled": "danger",
     "suspended": "danger",
     "terminated": "secondary",
     "expired": "danger",
@@ -1442,3 +1442,42 @@ def romanian_percentage(value: float, decimals: int = 1) -> str:
     percentage = value * 100
     formatted = f"{percentage:.{decimals}f}".replace(".", ",")
     return f"{formatted}%"
+
+
+# ===============================================================================
+# FORM ACTIONS COMPONENT (A.1)
+# ===============================================================================
+
+
+@register.inclusion_tag("components/form_actions.html")
+def form_actions(  # noqa: PLR0913
+    submit_label: str = "",
+    cancel_url: str = "",
+    cancel_label: str = "",
+    submit_variant: str = "primary",
+    align: str = "right",
+    css_class: str = "",
+) -> dict[str, Any]:
+    """
+    Render a standardised form submit/cancel row.
+
+    Usage:
+        {% form_actions submit_label="Save Changes" cancel_url=back_url %}
+        {% form_actions submit_label="Delete" submit_variant="danger" cancel_url=back_url %}
+
+    Args:
+        submit_label:   Text for the submit button (default: "Save").
+        cancel_url:     URL for the cancel link; omits cancel when empty.
+        cancel_label:   Text for cancel link (default: "Cancel").
+        submit_variant: Button colour variant — primary|danger|warning.
+        align:          Container alignment — right|left|between.
+        css_class:      Extra CSS classes on the container div.
+    """
+    return {
+        "submit_label": submit_label,
+        "cancel_url": cancel_url,
+        "cancel_label": cancel_label,
+        "submit_variant": submit_variant,
+        "align": align,
+        "css_class": css_class,
+    }
