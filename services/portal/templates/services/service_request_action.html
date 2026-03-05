@@ -32,8 +32,8 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- Main Form -->
     <div class="lg:col-span-2">
-      <div class="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h2 class="text-xl font-semibold text-white mb-6">{% trans "Select Action Type" %}</h2>
+      {% trans 'Select Action Type' as sc_sat_title %}
+      {% section_card title=sc_sat_title icon="swap" %}
 
         <form method="post" action="{% url 'services:request_action' service_id=service_id %}">
           {% csrf_token %}
@@ -188,14 +188,14 @@
             </a>
           </div>
         </form>
-      </div>
+      {% end_section_card %}
     </div>
 
     <!-- Sidebar -->
     <div class="lg:col-span-1 space-y-6">
       <!-- Current Service Info -->
-      <div class="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">{% trans "Current Service" %}</h3>
+      {% trans 'Current Service' as sc_cs_title %}
+      {% section_card title=sc_cs_title icon="server" %}
 
         <div class="space-y-3">
           <div>
@@ -228,11 +228,11 @@
             </dd>
           </div>
         </div>
-      </div>
+      {% end_section_card %}
 
       <!-- Request Process -->
-      <div class="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">{% trans "Request Process" %}</h3>
+      {% trans 'Request Process' as sc_rp_title %}
+      {% section_card title=sc_rp_title icon="list" %}
 
         <div class="space-y-4">
           <div class="flex items-center space-x-3">
@@ -275,11 +275,11 @@
             </div>
           </div>
         </div>
-      </div>
+      {% end_section_card %}
 
       <!-- Contact Support -->
-      <div class="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h3 class="text-lg font-semibold text-white mb-4">{% trans "Need Help?" %}</h3>
+      {% trans 'Need Help?' as sc_nh_title %}
+      {% section_card title=sc_nh_title icon="chat" %}
 
         <div class="space-y-3">
           <a href="#" class="flex items-center space-x-3 text-slate-300 hover:text-white transition-colors">
@@ -292,7 +292,7 @@
             <span>{% trans "Email Support" %}</span>
           </a>
         </div>
-      </div>
+      {% end_section_card %}
     </div>
   </div>
 </div>
